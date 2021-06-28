@@ -9,10 +9,13 @@ import Utils from "./helper/utils";
 import Middleware from "./helper/middleware";
 import UserRoute from "./modules/user/userRoute";
 import responseConstants from "./constants/responseConstants";
-
+import * as SocketIO from "socket.io";
+import { PoolSocket } from "./socket/socket";
+import { Log } from "./helper/logger";
 class App {
     public express;
-
+    private poolSocket = new PoolSocket();
+    private logger = Log.getLogger();
     constructor() {
         let authMongo = '';
         this.express = express();
@@ -26,10 +29,18 @@ class App {
 
         l10n.setTranslations("en", EnLan.default);
         this.express.use(l10n.enableL10NExpress);
-        this.express.set("port", process.env.PORT);
         this.express.use(bodyParser.json({ limit: "1gb" }));
         this.express.use(bodyParser.urlencoded({ limit: "1gb", extended: true }));
         this.express.use(cors());
+        const Server = this.express.listen(process.env.PORT, () => {
+            this.logger.info(`The server is running in port localhost: ${process.env.PORT}`);
+          });
+
+        const io = SocketIO.listen(Server, {
+            transports: ["websocket", "polling"],
+        });
+        this.express.set("IO", io);
+        this.poolSocket.init(io, this.express);
 
         this.mountRoutes();
     }

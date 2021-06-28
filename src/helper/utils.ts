@@ -1,6 +1,6 @@
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 
-import Logger from "./logger";
+import {Log} from "./logger";
 import commonConstants from "../constants/commonConstants";
 
 class Utils {
@@ -60,14 +60,6 @@ class Utils {
             reqs.password = "";
             reqs.newPassword = "";
             reqs.oldPassword = "";
-            Logger.info("-----------------------------------------API START-----------------------------------------");
-            Logger.info(reqs);
-            Logger.info(req.path);
-            Logger.info(req.files);
-            Logger.info(req.query);
-            Logger.info(req.method);
-            Logger.info(req.headers);
-            Logger.info("-----------------------------------------API END-----------------------------------------");
         }
     }
 

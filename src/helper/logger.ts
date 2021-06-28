@@ -1,30 +1,22 @@
 import * as moment from "moment-timezone";
-import { createLogger, format } from "winston";
-import * as DailyRotateFile from "winston-daily-rotate-file";
+import { createLogger, format, transports } from "winston";
+import { Constants } from "../constants/constants";
+const {
+  combine, timestamp, prettyPrint, colorize,
+} = format;
 
-import commonConstants from "../constants/commonConstants";
+export class Log {
 
-const { combine, timestamp, prettyPrint } = format;
-
-const transport = new DailyRotateFile({
-    maxSize: '20g',
-    maxFiles: '14d',
-    dirname: './logs',
-    zippedArchive: true,
-    datePattern: 'YYYY-MM-DD',
-    filename: `${process.env.NODE_ENV}-%DATE%.log`,
-});
-
-const timestampFormat = () => {
-    return moment.tz(new Date(), commonConstants.timezone).format("YYYY-MM-DD hh:mm:ss");
-};
-
-const logger = createLogger({
-    format: combine(
-        timestamp({ format: timestampFormat() }),
+  public static getLogger() {
+    const timestampFormat: string = moment().format(Constants.TIME_STAMP_FORMAT);
+    return createLogger({
+      format: combine(
+        timestamp({ format: timestampFormat }),
         prettyPrint(),
-    ),
-    transports: [transport],
-});
-
-export default logger;
+        colorize(),
+      ),
+      level: "debug",
+      transports: [new transports.Console()],
+    });
+  }
+}

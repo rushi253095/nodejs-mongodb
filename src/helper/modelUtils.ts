@@ -1,7 +1,6 @@
 import Utils from "./utils";
 import modelConstants from "../constants/modelConstants";
 import commonConstants from "../constants/commonConstants";
-
 class ModelUtils {
     constructor() { }
 
